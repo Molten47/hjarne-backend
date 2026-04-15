@@ -1,0 +1,11 @@
+pub mod auth;
+pub mod health;
+pub mod patients;
+pub mod staff;
+pub mod appointments;
+pub mod cases;
+pub mod prescriptions;
+pub mod notifications;
+pub mod ws;
+pub mod clinical_comms;
+pub mod portal;
