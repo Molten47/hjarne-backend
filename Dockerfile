@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 
+# DEBUG: verify .sqlx files are present
+RUN echo "=== .sqlx file count ===" && ls .sqlx | wc -l && echo "=== first few files ===" && ls .sqlx | head -5
+
 ENV SQLX_OFFLINE=true
 
 RUN cargo build --release --bin hjarne-api
