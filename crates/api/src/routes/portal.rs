@@ -542,12 +542,12 @@ pub async fn portal_diagnoses(
 
     // ensure case belongs to this patient
     let owns = sqlx::query_scalar!(
-        "SELECT COUNT(*) FROM case_files WHERE id = $1 AND patient_id = $2",
+        r#"SELECT COUNT(*) as "count!" FROM case_files WHERE id = $1 AND patient_id = $2"#,
         case_id, patient_id
     )
     .fetch_one(&state.db)
     .await?
-    .unwrap_or(0) > 0;
+    > 0;
 
     if !owns {
         return Err(AppError::Forbidden("not your case".to_string()));
@@ -874,12 +874,12 @@ pub async fn staff_send_portal_message(
 
     // confirm patient exists
     let exists = sqlx::query_scalar!(
-        "SELECT COUNT(*) FROM patients WHERE id = $1",
+        r#"SELECT COUNT(*) as "count!" FROM patients WHERE id = $1"#,
         patient_id
     )
     .fetch_one(&state.db)
     .await?
-    .unwrap_or(0) > 0;
+    > 0;
 
     if !exists {
         return Err(AppError::NotFound("patient not found".to_string()));

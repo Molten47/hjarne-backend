@@ -1,16 +1,17 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT COUNT(*) FROM patients WHERE id = $1",
+  "query": "SELECT COUNT(*) as \"count!\" FROM case_files WHERE id = $1 AND patient_id = $2",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "count",
+        "name": "count!",
         "type_info": "Int8"
       }
     ],
     "parameters": {
       "Left": [
+        "Uuid",
         "Uuid"
       ]
     },
@@ -18,5 +19,5 @@
       null
     ]
   },
-  "hash": "38fa02bc8756137ac0aa50ae20ee20424aaf54a690bb3ce0a4c97349fb6aec25"
+  "hash": "726ce3afde609cb73b9fa5fbb084f1fa50c05e1a0a104224eb7c3d56158cb1fc"
 }
