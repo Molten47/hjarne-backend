@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 
+ENV SQLX_OFFLINE=true
+
 RUN cargo build --release --bin hjarne-api
 
 # ---- Runtime stage ----
@@ -19,10 +21,7 @@ RUN apt-get update && apt-get install -y \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-
-
 WORKDIR /app
 COPY --from=builder /app/target/release/hjarne-api .
-
 EXPOSE 3000
 CMD ["./hjarne-api"]
