@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT COUNT(*) FROM prescription_items pi\n            JOIN drugs d ON d.id = pi.drug_id\n            JOIN prescriptions p ON p.id = pi.prescription_id\n            JOIN case_files cf ON cf.id = p.case_file_id\n            WHERE cf.patient_id = (SELECT patient_id FROM case_files WHERE id = $1)\n              AND p.status != 'cancelled'\n              AND d.interactions && (SELECT interactions FROM drugs WHERE id = $2)\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "f19a22b9e08ad8d6a5140800f1337ef923157f15f0128c0dffd9e6f73e1d1ee3"
+}

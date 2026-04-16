@@ -1,0 +1,89 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE appointments\n            SET daily_room_url = $1\n            WHERE id = $2\n            RETURNING id, patient_id, physician_id, department,\n                      appointment_type, status, scheduled_at,\n                      duration_minutes, reason, channel, daily_room_url, created_at\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "patient_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "physician_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "department",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "appointment_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "scheduled_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "duration_minutes",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "reason",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "channel",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "daily_room_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "4f0b7ef7eabf8cbf0ebea3607ffc395d4c3ff66e1e50c2cd74c1344bf8fd6821"
+}

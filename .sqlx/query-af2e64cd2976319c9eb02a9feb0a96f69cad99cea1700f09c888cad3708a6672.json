@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT file_name, file_type, file_data FROM clinical_attachments WHERE id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "file_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "file_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "file_data",
+        "type_info": "Bytea"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "af2e64cd2976319c9eb02a9feb0a96f69cad99cea1700f09c888cad3708a6672"
+}

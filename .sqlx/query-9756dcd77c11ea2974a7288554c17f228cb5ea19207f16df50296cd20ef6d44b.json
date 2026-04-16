@@ -1,0 +1,93 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id, patient_id, physician_id, department,\n               appointment_type, status, scheduled_at,\n               duration_minutes, reason, channel, daily_room_url, created_at\n        FROM appointments\n        WHERE ($1::uuid IS NULL OR physician_id = $1)\n          AND ($2::uuid IS NULL OR patient_id = $2)\n          AND ($3::text IS NULL OR status = $3)\n          AND (\n            $4::timestamptz IS NULL OR $5::uuid IS NULL\n            OR (scheduled_at, id) < ($4, $5)\n          )\n        ORDER BY scheduled_at DESC, id DESC\n        LIMIT $6\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "patient_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "physician_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "department",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "appointment_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "scheduled_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "duration_minutes",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "reason",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "channel",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "daily_room_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text",
+        "Timestamptz",
+        "Uuid",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "9756dcd77c11ea2974a7288554c17f228cb5ea19207f16df50296cd20ef6d44b"
+}

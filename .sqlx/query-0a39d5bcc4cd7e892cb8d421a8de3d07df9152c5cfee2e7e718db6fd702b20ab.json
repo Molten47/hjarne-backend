@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE notifications\n                SET status = 'read', read_at = NOW()\n                WHERE recipient_id = $1\n                  AND status IN ('pending', 'delivered')\n                ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0a39d5bcc4cd7e892cb8d421a8de3d07df9152c5cfee2e7e718db6fd702b20ab"
+}

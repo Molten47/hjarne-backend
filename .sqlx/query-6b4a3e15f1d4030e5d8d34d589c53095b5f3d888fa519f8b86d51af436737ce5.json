@@ -1,0 +1,82 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            p.id, p.mrn, p.first_name, p.last_name, p.date_of_birth,\n            p.gender, p.blood_group, p.portal_active,\n            pc.phone        AS \"phone?\",\n            pc.email        AS \"email?\",\n            pc.address_line1 AS \"address?\"\n        FROM patients p\n        LEFT JOIN patient_contacts pc ON pc.patient_id = p.id\n        WHERE p.id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "mrn",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "first_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_of_birth",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 5,
+        "name": "gender",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "blood_group",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "portal_active",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "phone?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "email?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "address?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "6b4a3e15f1d4030e5d8d34d589c53095b5f3d888fa519f8b86d51af436737ce5"
+}

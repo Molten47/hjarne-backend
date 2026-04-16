@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE portal_messages\n        SET read_at = NOW()\n        WHERE patient_id = $1\n          AND sender_type = 'staff'\n          AND read_at IS NULL\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "46371137df66c9b1fe3180782058def408338216be43ab5ae687bde98f07ede3"
+}

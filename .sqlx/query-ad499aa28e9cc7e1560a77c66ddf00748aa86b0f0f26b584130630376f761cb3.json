@@ -1,0 +1,82 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            pi.id, pi.drug_id, d.name AS drug_name,\n            d.generic_name, pi.dosage, pi.frequency,\n            pi.route, pi.duration_days, pi.instructions,\n            pi.contraindication_flagged, d.is_controlled\n        FROM prescription_items pi\n        JOIN drugs d ON d.id = pi.drug_id\n        WHERE pi.prescription_id = $1\n        ORDER BY pi.created_at ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "drug_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "drug_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "generic_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "dosage",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "frequency",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "route",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "duration_days",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "instructions",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "contraindication_flagged",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "is_controlled",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "ad499aa28e9cc7e1560a77c66ddf00748aa86b0f0f26b584130630376f761cb3"
+}

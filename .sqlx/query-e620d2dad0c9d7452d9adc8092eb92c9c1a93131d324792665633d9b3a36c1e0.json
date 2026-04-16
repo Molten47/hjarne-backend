@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT ca.id, ca.staff_id,\n               s.first_name AS \"first_name!\",\n               s.last_name  AS \"last_name!\",\n               ca.role      AS \"role!\",\n               ca.assigned_at\n        FROM case_assignments ca\n        JOIN staff s ON s.id = ca.staff_id\n        WHERE ca.case_id = $1\n        ORDER BY ca.assigned_at ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "staff_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "first_name!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "role!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "assigned_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "e620d2dad0c9d7452d9adc8092eb92c9c1a93131d324792665633d9b3a36c1e0"
+}

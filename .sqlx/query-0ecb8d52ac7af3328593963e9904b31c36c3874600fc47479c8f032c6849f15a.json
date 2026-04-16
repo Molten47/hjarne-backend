@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO dispensary_log (drug_id, prescription_item_id, dispensed_by, quantity)\n            VALUES ($1, $2, $3, 1)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0ecb8d52ac7af3328593963e9904b31c36c3874600fc47479c8f032c6849f15a"
+}

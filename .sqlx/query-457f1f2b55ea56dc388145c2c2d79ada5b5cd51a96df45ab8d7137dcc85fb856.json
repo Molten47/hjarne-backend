@@ -1,0 +1,66 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                SELECT DISTINCT p.id, p.mrn, p.first_name, p.last_name,\n                       p.date_of_birth, p.gender, p.blood_group, p.portal_active\n                FROM patients p\n                JOIN case_files cf      ON cf.patient_id = p.id\n                JOIN case_assignments ca ON ca.case_id   = cf.id\n                WHERE ca.staff_id = $1\n                  AND (LOWER(p.last_name)  LIKE $2\n                       OR LOWER(p.first_name) LIKE $2\n                       OR p.mrn ILIKE $2)\n                ORDER BY p.last_name, p.first_name\n                LIMIT $3\n                ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "mrn",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "first_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_of_birth",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 5,
+        "name": "gender",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "blood_group",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "portal_active",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "457f1f2b55ea56dc388145c2c2d79ada5b5cd51a96df45ab8d7137dcc85fb856"
+}

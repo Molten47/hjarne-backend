@@ -1,0 +1,66 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT DISTINCT p.id, p.mrn, p.first_name, p.last_name,\n                   p.date_of_birth, p.gender, p.blood_group, p.portal_active\n            FROM patients p\n            JOIN case_files cf       ON cf.patient_id = p.id\n            JOIN case_assignments ca ON ca.case_id    = cf.id\n            WHERE ca.staff_id = $1\n              AND ($2::uuid IS NULL OR p.id > $2)\n            ORDER BY p.id\n            LIMIT $3\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "mrn",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "first_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_of_birth",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 5,
+        "name": "gender",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "blood_group",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "portal_active",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "4fd7fb7e0da6de21c6e3cc5c9885de4cdfe73a0d8983517c53b04621190e2113"
+}

@@ -1,0 +1,67 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO prescriptions (\n            case_file_id, prescribed_by, ai_recommendation,\n            ai_confidence, physician_approved, approved_at, status\n        )\n        VALUES ($1, $2, $3, $4, TRUE, NOW(), 'approved')\n        RETURNING id, case_file_id, prescribed_by, status,\n                  prescribed_at, physician_approved, ai_confidence, ai_recommendation\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "case_file_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "prescribed_by",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "prescribed_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "physician_approved",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "ai_confidence",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 7,
+        "name": "ai_recommendation",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text",
+        "Float8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "96a45b2eb12bd249947b6a7ecf393e1c7a85e0bcd77dce46895ed505b964339e"
+}

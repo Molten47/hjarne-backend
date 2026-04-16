@@ -1,0 +1,92 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT cf.id, cf.case_number, cf.patient_id, cf.primary_physician_id,\n                   cf.department, cf.status, cf.admission_type, cf.admitted_at,\n                   cf.discharged_at, cf.chief_complaint, cf.opened_at, cf.closed_at\n            FROM case_files cf\n            JOIN case_assignments ca ON ca.case_id = cf.id\n            WHERE ca.staff_id = $1\n              AND ($2::text IS NULL OR cf.status = $2)\n              AND (\n                $3::timestamptz IS NULL OR $4::uuid IS NULL\n                OR (cf.opened_at, cf.id) < ($3, $4)\n              )\n            ORDER BY cf.opened_at DESC, cf.id DESC\n            LIMIT $5\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "case_number",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "patient_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "primary_physician_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "department",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "admission_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "admitted_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "discharged_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "chief_complaint",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "opened_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 11,
+        "name": "closed_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Timestamptz",
+        "Uuid",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "61548f9935a442fcf16c566cca0ae79008ab07528611a993cbe0327a12d80cc7"
+}

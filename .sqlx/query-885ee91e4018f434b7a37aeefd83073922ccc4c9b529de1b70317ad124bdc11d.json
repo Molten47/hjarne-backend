@@ -1,0 +1,96 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO appointments (\n            patient_id, physician_id, booked_by, department,\n            appointment_type, scheduled_at, duration_minutes,\n            reason, channel\n        )\n        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)\n  RETURNING id, patient_id, physician_id, department,\n                  appointment_type, status, scheduled_at,\n                  duration_minutes, reason, channel, daily_room_url, created_at\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "patient_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "physician_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "department",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "appointment_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "scheduled_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "duration_minutes",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "reason",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "channel",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "daily_room_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid",
+        "Varchar",
+        "Varchar",
+        "Timestamptz",
+        "Int4",
+        "Text",
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "885ee91e4018f434b7a37aeefd83073922ccc4c9b529de1b70317ad124bdc11d"
+}

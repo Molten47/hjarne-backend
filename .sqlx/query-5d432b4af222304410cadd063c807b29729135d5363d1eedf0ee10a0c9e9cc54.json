@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE clinical_communications\n        SET status = 'read', read_at = NOW()\n        WHERE id = $1 AND recipient_id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5d432b4af222304410cadd063c807b29729135d5363d1eedf0ee10a0c9e9cc54"
+}

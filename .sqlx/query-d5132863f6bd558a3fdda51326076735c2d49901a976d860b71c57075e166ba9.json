@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, file_name, file_type, file_size, uploaded_at\n            FROM clinical_attachments\n            WHERE communication_id = $1\n            ORDER BY uploaded_at ASC\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "file_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "file_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "file_size",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "uploaded_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "d5132863f6bd558a3fdda51326076735c2d49901a976d860b71c57075e166ba9"
+}

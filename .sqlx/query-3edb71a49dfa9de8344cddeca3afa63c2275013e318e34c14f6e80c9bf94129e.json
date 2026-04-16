@@ -1,0 +1,60 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH ins AS (\n            INSERT INTO portal_messages (patient_id, staff_id, body, sender_type)\n            VALUES ($1, $2, $3, 'staff')\n            RETURNING id, staff_id, body, sender_type, sent_at, read_at\n        )\n        SELECT\n            ins.id,\n            ins.staff_id,\n            CONCAT(s.first_name, ' ', s.last_name) AS \"staff_name!\",\n            ins.body,\n            ins.sender_type,\n            ins.sent_at,\n            ins.read_at\n        FROM ins\n        JOIN staff s ON s.id = ins.staff_id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "staff_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "staff_name!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "sender_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "sent_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "read_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      null,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "3edb71a49dfa9de8344cddeca3afa63c2275013e318e34c14f6e80c9bf94129e"
+}

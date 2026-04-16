@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE drug_stock\n            SET quantity_on_hand = GREATEST(quantity_on_hand - 1, 0),\n                updated_at = NOW()\n            WHERE drug_id = $1\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "603515a6bda404b75dc03b5402966fa5378bdf189a66602605c60be4c659fb49"
+}

@@ -1,0 +1,56 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            ds.drug_id,\n            d.name,\n            d.category,\n            ds.unit,\n            ds.quantity_on_hand,\n            ds.reorder_threshold,\n            (ds.quantity_on_hand <= ds.reorder_threshold) AS \"is_low!\"\n        FROM drug_stock ds\n        JOIN drugs d ON d.id = ds.drug_id\n        WHERE d.is_active = TRUE\n        ORDER BY d.name ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "drug_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "category",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "unit",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "quantity_on_hand",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "reorder_threshold",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_low!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "a7b19ddad2956e6a32fe2a6192e088ef2981dd8c6214df8173f83e0f776914cc"
+}

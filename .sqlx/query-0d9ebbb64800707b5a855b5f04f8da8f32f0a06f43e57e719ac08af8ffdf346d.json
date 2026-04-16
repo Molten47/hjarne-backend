@@ -1,0 +1,83 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            cc.id, cc.case_file_id, cc.comm_type, cc.subject,\n            cc.body, cc.status, cc.created_at,\n            au.id AS sender_auth_id,\n            s.first_name AS sender_first_name,\n            s.last_name  AS sender_last_name,\n            s.role       AS sender_role\n        FROM clinical_communications cc\n        JOIN auth_users au ON au.id = cc.sender_id\n        JOIN staff s ON s.id = au.entity_id\n        WHERE cc.case_file_id = $1\n          AND (\n              cc.recipient_id IS NULL\n              OR cc.recipient_id = $2\n              OR cc.sender_id   = $2\n          )\n        ORDER BY cc.created_at ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "case_file_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "comm_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "subject",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "sender_auth_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "sender_first_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "sender_last_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "sender_role",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "0d9ebbb64800707b5a855b5f04f8da8f32f0a06f43e57e719ac08af8ffdf346d"
+}

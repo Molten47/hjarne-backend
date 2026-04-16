@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE patients SET\n            nationality = COALESCE($2, nationality),\n            height_cm   = COALESCE($3, height_cm),\n            weight_kg   = COALESCE($4, weight_kg),\n            bmi         = CASE WHEN $3 IS NOT NULL AND $4 IS NOT NULL THEN $5 ELSE bmi END,\n            updated_at  = NOW()\n        WHERE id = $1\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Varchar",
+        "Float8",
+        "Float8",
+        "Float8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "645e8c9501e7b6ca6bed623a77dbbab95e079a036ffa88ab85849f0dedecf91a"
+}

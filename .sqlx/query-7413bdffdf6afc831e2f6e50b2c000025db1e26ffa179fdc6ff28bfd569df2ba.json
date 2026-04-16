@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT ds.quantity_on_hand, ds.reorder_threshold, d.name AS drug_name\n            FROM drug_stock ds\n            JOIN drugs d ON d.id = ds.drug_id\n            WHERE ds.drug_id = $1\n              AND ds.quantity_on_hand <= ds.reorder_threshold\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "quantity_on_hand",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "reorder_threshold",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "drug_name",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "7413bdffdf6afc831e2f6e50b2c000025db1e26ffa179fdc6ff28bfd569df2ba"
+}

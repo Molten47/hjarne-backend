@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE portal_invites\n        SET expires_at = NOW()\n        WHERE patient_id = $1 AND consumed_at IS NULL\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "f2881cdc85ec698c04311a90938978c651002868812203dee783ae0804280d3d"
+}

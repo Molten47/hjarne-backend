@@ -1,0 +1,136 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            p.id, p.mrn, p.first_name, p.last_name, p.date_of_birth,\n            p.gender, p.blood_group, p.genotype,\n            p.height_cm, p.weight_kg, p.bmi, p.nationality,\n            pc.phone         AS \"phone?\",\n            pc.email         AS \"email?\",\n            pc.address_line1 AS \"address_line1?\",\n            pc.address_line2 AS \"address_line2?\",\n            pc.city          AS \"city?\",\n            pc.state_province AS \"state_province?\",\n            pc.zip_postal    AS \"zip_postal?\",\n            pc.country       AS \"country?\"\n        FROM patients p\n        LEFT JOIN patient_contacts pc ON pc.patient_id = p.id\n        WHERE p.id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "mrn",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "first_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_of_birth",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 5,
+        "name": "gender",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "blood_group",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "genotype",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "height_cm",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 9,
+        "name": "weight_kg",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 10,
+        "name": "bmi",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 11,
+        "name": "nationality",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 12,
+        "name": "phone?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 13,
+        "name": "email?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 14,
+        "name": "address_line1?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 15,
+        "name": "address_line2?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 16,
+        "name": "city?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 17,
+        "name": "state_province?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 18,
+        "name": "zip_postal?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 19,
+        "name": "country?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "fe667ec505e0e93c90602adc2ac723707930134becaf9e2a649e12753bb310f7"
+}

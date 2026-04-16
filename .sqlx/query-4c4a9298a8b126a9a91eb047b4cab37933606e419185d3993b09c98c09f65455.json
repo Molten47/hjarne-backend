@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO case_assignments (case_id, staff_id, role, assigned_by)\n            VALUES ($1, $2, 'physician', $3)\n            ON CONFLICT DO NOTHING\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4c4a9298a8b126a9a91eb047b4cab37933606e419185d3993b09c98c09f65455"
+}
