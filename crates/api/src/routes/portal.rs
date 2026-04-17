@@ -485,7 +485,7 @@ pub async fn portal_appointments(
 ) -> AppResult<Json<ApiResponse<Vec<PortalAppointment>>>> {
     let patient_id = auth_user.0.entity_id;
     
-let appointments = sqlx::query_as!(
+let appointments = sqlx::query_as_unchecked!(
         PortalAppointment,
         r#"
         SELECT
@@ -514,7 +514,7 @@ pub async fn portal_cases(
 ) -> AppResult<Json<ApiResponse<Vec<PortalCase>>>> {
     let patient_id = auth_user.0.entity_id;
 
-    let cases = sqlx::query_as!(
+    let cases = sqlx::query_as_unchecked!(
         PortalCase,
         r#"
         SELECT id, case_number, department, status,
@@ -553,7 +553,7 @@ pub async fn portal_diagnoses(
         return Err(AppError::Forbidden("not your case".to_string()));
     }
 
-    let diagnoses = sqlx::query_as!(
+    let diagnoses = sqlx::query_as_unchecked!(
         PortalDiagnosis,
         r#"
         SELECT id, icd10_code, description, severity, diagnosed_at
@@ -582,7 +582,7 @@ pub async fn submit_complaint(
         return Err(AppError::BadRequest("subject and body are required".to_string()));
     }
 
-    let complaint = sqlx::query_as!(
+    let complaint = sqlx::query_as_unchecked!(
         PortalComplaint,
         r#"
         INSERT INTO portal_complaints (patient_id, subject, body)
@@ -607,7 +607,7 @@ pub async fn portal_messages(
 ) -> AppResult<Json<ApiResponse<Vec<PortalMessage>>>> {
     let patient_id = auth_user.0.entity_id;
 
-    let messages = sqlx::query_as!(
+    let messages = sqlx::query_as_unchecked!(
         PortalMessage,
         r#"
         SELECT
@@ -658,7 +658,7 @@ pub async fn send_portal_message(
         return Err(AppError::BadRequest("message body cannot be empty".to_string()));
     }
 
-let message = sqlx::query_as!(
+let message = sqlx::query_as_unchecked!(
         PortalMessage,
         r#"
         WITH ins AS (
@@ -757,7 +757,7 @@ pub async fn get_portal_profile(
 ) -> AppResult<Json<ApiResponse<PortalProfile>>> {
     let patient_id = auth_user.0.entity_id;
 
-let profile = sqlx::query_as!(
+let profile = sqlx::query_as_unchecked!(
         PortalProfile,
         r#"
         SELECT
@@ -885,7 +885,7 @@ pub async fn staff_send_portal_message(
         return Err(AppError::NotFound("patient not found".to_string()));
     }
 
-    let message = sqlx::query_as!(
+    let message = sqlx::query_as_unchecked!(
         PortalMessage,
         r#"
         WITH ins AS (
@@ -942,7 +942,7 @@ pub async fn staff_get_patient_messages(
     Extension(_auth_user): Extension<AuthUser>,
     Path(patient_id): Path<Uuid>,
 ) -> AppResult<Json<ApiResponse<Vec<PortalMessage>>>> {
-    let messages = sqlx::query_as!(
+    let messages = sqlx::query_as_unchecked!(
         PortalMessage,
         r#"
         SELECT

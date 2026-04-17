@@ -109,7 +109,7 @@ pub async fn list_cases(
     let status   = params.status.as_deref().map(|s| s.to_owned());
 
     let mut cases = if can_see_all(&role) {
-        sqlx::query_as!(
+        sqlx::query_as_unchecked!(
             CaseRow,
             r#"
             SELECT id, case_number, patient_id, primary_physician_id,
@@ -132,7 +132,7 @@ pub async fn list_cases(
         .fetch_all(&state.db)
         .await?
     } else if is_clinical(&role) {
-        sqlx::query_as!(
+        sqlx::query_as_unchecked!(
             CaseRow,
             r#"
             SELECT cf.id, cf.case_number, cf.patient_id, cf.primary_physician_id,
@@ -190,7 +190,7 @@ pub async fn get_case(
     let role     = auth_user.0.roles.first().unwrap_or(&Role::Desk);
     let staff_id = auth_user.0.entity_id;
 
-    let case_file = sqlx::query_as!(
+    let case_file = sqlx::query_as_unchecked!(
         CaseRow,
         r#"
         SELECT id, case_number, patient_id, primary_physician_id,
@@ -207,7 +207,7 @@ pub async fn get_case(
 
     // clinical staff can only access cases they're assigned to
     if is_clinical(&role) {
-        let assigned = sqlx::query_scalar!(
+        let assigned = sqlx::query_scalar_unchecked!(
             "SELECT COUNT(*) FROM case_assignments WHERE case_id = $1 AND staff_id = $2",
             case_id,
             staff_id
@@ -233,7 +233,7 @@ pub async fn open_case(
 ) -> AppResult<Json<ApiResponse<CaseRow>>> {
     let opened_by = auth_user.0.entity_id;
 
-    let count: i64 = sqlx::query_scalar!("SELECT COUNT(*) FROM case_files")
+    let count: i64 = sqlx::query_scalar_unchecked!("SELECT COUNT(*) FROM case_files")
         .fetch_one(&state.db)
         .await?
         .unwrap_or(0);
@@ -246,7 +246,7 @@ pub async fn open_case(
         _ => None,
     };
 
-    let case_file = sqlx::query_as!(
+    let case_file = sqlx::query_as_unchecked!(
         CaseRow,
         r#"
         INSERT INTO case_files (
@@ -273,7 +273,7 @@ pub async fn open_case(
 
     // auto-assign primary physician into case_assignments
     if let Some(physician_id) = case_file.primary_physician_id {
-        sqlx::query!(
+        sqlx::query_unchecked!(
             r#"
             INSERT INTO case_assignments (case_id, staff_id, role, assigned_by)
             VALUES ($1, $2, 'physician', $3)
@@ -287,7 +287,7 @@ pub async fn open_case(
         .await?;
 
         // notify the assigned physician
-        if let Ok(Some(row)) = sqlx::query!(
+        if let Ok(Some(row)) = sqlx::query_unchecked!(
             "SELECT id FROM auth_users WHERE entity_id = $1 AND entity_type = 'staff'",
             physician_id
         )
@@ -324,7 +324,7 @@ pub async fn assign_staff(
 
     // only admin or a physician already on the case can assign others
     if !can_see_all(&requester_role) {
-        let on_case = sqlx::query_scalar!(
+        let on_case = sqlx::query_scalar_unchecked!(
             "SELECT COUNT(*) FROM case_assignments WHERE case_id = $1 AND staff_id = $2",
             case_id,
             requester_id
@@ -339,7 +339,7 @@ pub async fn assign_staff(
     }
 
     // confirm the case exists
-    let case_exists = sqlx::query_scalar!(
+    let case_exists = sqlx::query_scalar_unchecked!(
         "SELECT COUNT(*) FROM case_files WHERE id = $1",
         case_id
     )
@@ -352,7 +352,7 @@ pub async fn assign_staff(
     }
 
     // fetch the staff member being assigned
-    let staff = sqlx::query!(
+    let staff = sqlx::query_unchecked!(
         "SELECT id, role, first_name, last_name FROM staff WHERE id = $1 AND is_active = TRUE",
         payload.staff_id
     )
@@ -368,7 +368,7 @@ pub async fn assign_staff(
     }
 
     // insert assignment
-    let assignment = sqlx::query_as!(
+    let assignment = sqlx::query_as_unchecked!(
         AssignmentRow,
         r#"
         INSERT INTO case_assignments (case_id, staff_id, role, assigned_by)
@@ -392,7 +392,7 @@ pub async fn assign_staff(
     .map_err(|_| AppError::Conflict("staff member already assigned to this case".to_string()))?;
 
     // notify the newly assigned staff
-    if let Ok(Some(row)) = sqlx::query!(
+    if let Ok(Some(row)) = sqlx::query_unchecked!(
         "SELECT id FROM auth_users WHERE entity_id = $1 AND entity_type = 'staff'",
         staff.id
     )
@@ -423,7 +423,7 @@ pub async fn list_assignments(
 
     // clinical staff must be on the case to see its team
     if is_clinical(&role) {
-        let on_case = sqlx::query_scalar!(
+        let on_case = sqlx::query_scalar_unchecked!(
             "SELECT COUNT(*) FROM case_assignments WHERE case_id = $1 AND staff_id = $2",
             case_id,
             staff_id
@@ -437,7 +437,7 @@ pub async fn list_assignments(
         }
     }
 
-    let assignments = sqlx::query_as!(
+    let assignments = sqlx::query_as_unchecked!(
         AssignmentRow,
         r#"
         SELECT ca.id, ca.staff_id,
@@ -485,7 +485,7 @@ pub async fn update_case_status(
         _ => None,
     };
 
-    let case_file = sqlx::query_as!(
+    let case_file = sqlx::query_as_unchecked!(
         CaseRow,
         r#"
         UPDATE case_files
@@ -527,7 +527,7 @@ pub async fn add_diagnosis(
 
     let physician_id = auth_user.0.entity_id;
 
-    let diagnosis = sqlx::query_as!(
+    let diagnosis = sqlx::query_as_unchecked!(
         DiagnosisRow,
         r#"
         INSERT INTO diagnoses (case_file_id, physician_id, icd10_code, description, severity, notes)

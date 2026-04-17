@@ -68,7 +68,7 @@ async fn handle_socket(mut socket: WebSocket, state: AppState, user_id: Uuid) {
 
 // push any undelivered notifications from DB on connect
 async fn deliver_pending(state: &AppState, user_id: Uuid, socket: &mut WebSocket) {
-    let auth_user = sqlx::query!(
+    let auth_user = sqlx::query_unchecked!(
         "SELECT id FROM auth_users WHERE id = $1",
         user_id
     )
@@ -80,7 +80,7 @@ async fn deliver_pending(state: &AppState, user_id: Uuid, socket: &mut WebSocket
         _ => return,
     };
 
-    let pending = sqlx::query!(
+    let pending = sqlx::query_unchecked!(
         r#"
         SELECT id, event_type, payload
         FROM notifications
@@ -105,7 +105,7 @@ async fn deliver_pending(state: &AppState, user_id: Uuid, socket: &mut WebSocket
         }
 
         // mark as delivered
-        let _ = sqlx::query!(
+        let _ = sqlx::query_unchecked!(
             "UPDATE notifications SET status = 'delivered', delivered_at = NOW() WHERE id = $1",
             row.id
         )

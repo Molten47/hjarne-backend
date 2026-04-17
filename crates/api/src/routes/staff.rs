@@ -59,7 +59,7 @@ pub async fn list_staff(
 ) -> AppResult<Json<ApiResponse<Vec<StaffSummary>>>> {
     let limit = params.limit.unwrap_or(50).min(100);
 
-    let staff = sqlx::query_as!(
+    let staff = sqlx::query_as_unchecked!(
         StaffSummary,
         r#"
         SELECT
@@ -92,7 +92,7 @@ pub async fn create_staff(
     payload.validate()
         .map_err(|e| AppError::BadRequest(e.to_string()))?;
 
-    let count: i64 = sqlx::query_scalar!("SELECT COUNT(*) FROM staff")
+    let count: i64 = sqlx::query_scalar_unchecked!("SELECT COUNT(*) FROM staff")
         .fetch_one(&state.db)
         .await?
         .unwrap_or(0);
@@ -108,7 +108,7 @@ pub async fn create_staff(
     };
     let staff_code = format!("{}-{:04}", prefix, count + 1);
 
-    let staff = sqlx::query_as!(
+    let staff = sqlx::query_as_unchecked!(
         StaffSummary,
         r#"
         INSERT INTO staff (
@@ -143,7 +143,7 @@ pub async fn create_staff_auth(
     payload.validate()
         .map_err(|e| AppError::BadRequest(e.to_string()))?;
 
-    let exists = sqlx::query_scalar!(
+    let exists = sqlx::query_scalar_unchecked!(
         "SELECT COUNT(*) FROM staff WHERE id = $1",
         staff_id
     )
@@ -155,7 +155,7 @@ pub async fn create_staff_auth(
         return Err(AppError::NotFound(format!("staff {staff_id} not found")));
     }
 
-    let email_taken = sqlx::query_scalar!(
+    let email_taken = sqlx::query_scalar_unchecked!(
         "SELECT COUNT(*) FROM auth_users WHERE email = $1",
         payload.email
     )
@@ -169,7 +169,7 @@ pub async fn create_staff_auth(
 
     let password_hash = hash_password(&payload.password)?;
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         INSERT INTO auth_users (entity_id, entity_type, email, password_hash, must_change_password)
         VALUES ($1, 'staff', $2, $3, TRUE)

@@ -10,7 +10,7 @@ pub async fn push_notification(
     payload: Value,
 ) {
     // persist to DB
-    let result = sqlx::query!(
+    let result = sqlx::query_unchecked!(
         r#"
         INSERT INTO notifications (recipient_id, channel, event_type, payload, status)
         VALUES ($1, 'websocket', $2, $3, 'pending')

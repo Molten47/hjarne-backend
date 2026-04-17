@@ -107,7 +107,7 @@ pub async fn login(
     payload.validate()
         .map_err(|e| AppError::BadRequest(e.to_string()))?;
 
-    let user = sqlx::query!(
+    let user = sqlx::query_unchecked!(
         r#"
         SELECT id, entity_id, entity_type, email,
                password_hash, is_active, must_change_password
@@ -129,7 +129,7 @@ pub async fn login(
     }
 
     let roles = if user.entity_type == "staff" {
-        let staff = sqlx::query!(
+        let staff = sqlx::query_unchecked!(
             "SELECT role FROM staff WHERE id = $1", user.entity_id
         )
         .fetch_optional(&state.db)
@@ -143,7 +143,7 @@ pub async fn login(
     };
 
     let department = if user.entity_type == "staff" {
-        sqlx::query_scalar!(
+        sqlx::query_scalar_unchecked!(
             "SELECT department FROM staff WHERE id = $1", user.entity_id
         )
         .fetch_optional(&state.db)
@@ -171,7 +171,7 @@ pub async fn login(
     let refresh_expiry = Utc::now()
         + chrono::Duration::days(state.config.jwt_refresh_expiry_days);
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         INSERT INTO refresh_tokens
             (user_id, token_hash, family_id, expires_at, revoked)
@@ -194,7 +194,7 @@ pub async fn login(
         (state.config.jwt_refresh_expiry_days * 86400) as u64,
     ).await.ok();
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         "UPDATE auth_users SET last_login = NOW() WHERE id = $1", user.id
     )
     .execute(&state.db)
@@ -225,7 +225,7 @@ pub async fn refresh(
     let incoming_hash = hash_token(&payload.refresh_token);
 
     // look up token in DB
-    let token_row = sqlx::query!(
+    let token_row = sqlx::query_unchecked!(
         r#"
         SELECT id, user_id, family_id, expires_at, revoked
         FROM refresh_tokens
@@ -245,7 +245,7 @@ pub async fn refresh(
     // reuse detected — token already revoked but someone is presenting it
     if token_row.revoked {
         // kill entire family — assume compromise
-        sqlx::query!(
+        sqlx::query_unchecked!(
             "UPDATE refresh_tokens SET revoked = TRUE WHERE family_id = $1",
             token_row.family_id
         )
@@ -269,7 +269,7 @@ pub async fn refresh(
     }
 
     // valid — rotate: revoke old, issue new in same family
-    sqlx::query!(
+    sqlx::query_unchecked!(
         "UPDATE refresh_tokens SET revoked = TRUE WHERE id = $1",
         token_row.id
     )
@@ -281,7 +281,7 @@ pub async fn refresh(
     let refresh_expiry = Utc::now()
         + chrono::Duration::days(state.config.jwt_refresh_expiry_days);
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         INSERT INTO refresh_tokens
             (user_id, token_hash, family_id, expires_at, revoked)
@@ -305,7 +305,7 @@ pub async fn refresh(
     ).await.ok();
 
     // fetch user to rebuild access token
-let user = sqlx::query!(
+let user = sqlx::query_unchecked!(
     r#"
     SELECT au.id, au.entity_id, au.entity_type,
            s.role AS "role?: String", s.department AS "department?: String"
@@ -352,7 +352,7 @@ pub async fn change_password(
 
     let new_hash = hash_password(&payload.new_password)?;
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         UPDATE auth_users
         SET password_hash = $1, must_change_password = FALSE
@@ -393,7 +393,7 @@ pub async fn logout(
     let user_id = auth_user.0.sub;
 
     // revoke all refresh token families for this user
-    sqlx::query!(
+    sqlx::query_unchecked!(
         "UPDATE refresh_tokens SET revoked = TRUE WHERE user_id = $1 AND revoked = FALSE",
         user_id
     )

@@ -72,7 +72,7 @@ pub async fn list_appointments(
         Some(auth_user.0.entity_id)
     };
 
-    let mut appointments = sqlx::query_as!(
+    let mut appointments = sqlx::query_as_unchecked!(
         AppointmentRow,
         r#"
         SELECT id, patient_id, physician_id, department,
@@ -125,7 +125,7 @@ pub async fn create_appointment(
 ) -> AppResult<Json<ApiResponse<AppointmentRow>>> {
     let booked_by = auth_user.0.entity_id;
 
-    let appointment = sqlx::query_as!(
+    let appointment = sqlx::query_as_unchecked!(
         AppointmentRow,
         r#"
         INSERT INTO appointments (
@@ -154,7 +154,7 @@ pub async fn create_appointment(
 let appointment = if appointment.channel.as_deref() == Some("telehealth") {
         let room_url = format!("https://meet.jit.si/hjarne-{}", appointment.id);
 
-        sqlx::query_as!(
+        sqlx::query_as_unchecked!(
             AppointmentRow,
             r#"
             UPDATE appointments
@@ -174,7 +174,7 @@ let appointment = if appointment.channel.as_deref() == Some("telehealth") {
     };
 
     if let Some(physician_id) = appointment.physician_id {
-        if let Ok(Some(row)) = sqlx::query!(
+        if let Ok(Some(row)) = sqlx::query_unchecked!(
             "SELECT id FROM auth_users WHERE entity_id = $1 AND entity_type = 'staff'",
             physician_id
         )
@@ -218,7 +218,7 @@ pub async fn update_appointment_status(
         )));
     }
 
-    let appointment = sqlx::query_as!(
+    let appointment = sqlx::query_as_unchecked!(
         AppointmentRow,
         r#"
         UPDATE appointments

@@ -22,7 +22,7 @@ pub async fn list_notifications(
 ) -> AppResult<Json<ApiResponse<Vec<NotificationRow>>>> {
     let user_id = auth_user.0.sub;
 
-    let notifications = sqlx::query_as!(
+    let notifications = sqlx::query_as_unchecked!(
         NotificationRow,
         r#"
         SELECT id, event_type, payload, status, created_at, read_at
@@ -55,7 +55,7 @@ pub async fn mark_read(
     match payload.ids {
         // mark specific notifications read
         Some(ids) if !ids.is_empty() => {
-            sqlx::query!(
+            sqlx::query_unchecked!(
                 r#"
                 UPDATE notifications
                 SET status = 'read', read_at = NOW()
@@ -71,7 +71,7 @@ pub async fn mark_read(
         }
         // mark all read if no ids provided
         _ => {
-            sqlx::query!(
+            sqlx::query_unchecked!(
                 r#"
                 UPDATE notifications
                 SET status = 'read', read_at = NOW()

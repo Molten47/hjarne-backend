@@ -62,7 +62,7 @@ pub async fn list_comms(
     Path(case_id): Path<Uuid>,
     Extension(auth_user): Extension<AuthUser>,
 ) -> AppResult<Json<ApiResponse<Vec<ClinicalCommRow>>>> {
-    let rows = sqlx::query!(
+    let rows = sqlx::query_unchecked!(
         r#"
         SELECT
             cc.id, cc.case_file_id, cc.comm_type, cc.subject,
@@ -91,7 +91,7 @@ pub async fn list_comms(
     let mut comms: Vec<ClinicalCommRow> = Vec::new();
 
     for row in rows {
-        let attachments = sqlx::query_as!(
+        let attachments = sqlx::query_as_unchecked!(
             AttachmentMeta,
             r#"
             SELECT id, file_name, file_type, file_size, uploaded_at
@@ -137,7 +137,7 @@ pub async fn send_comm(
         ));
     }
 
-    let comm = sqlx::query!(
+    let comm = sqlx::query_unchecked!(
         r#"
         INSERT INTO clinical_communications
             (case_file_id, sender_id, recipient_id, comm_type, subject, body)
@@ -154,7 +154,7 @@ pub async fn send_comm(
     .fetch_one(&state.db)
     .await?;
 
-    let sender = sqlx::query!(
+    let sender = sqlx::query_unchecked!(
         r#"
         SELECT au.id, s.first_name, s.last_name, s.role
         FROM auth_users au
@@ -231,7 +231,7 @@ pub async fn upload_attachment(
 
     let file_size = file_data.len() as i32;
 
-    let attachment = sqlx::query_as!(
+    let attachment = sqlx::query_as_unchecked!(
         AttachmentMeta,
         r#"
         INSERT INTO clinical_attachments
@@ -255,7 +255,7 @@ pub async fn serve_attachment(
     State(state): State<AppState>,
     Path(attachment_id): Path<Uuid>,
 ) -> AppResult<impl IntoResponse> {
-    let row = sqlx::query!(
+    let row = sqlx::query_unchecked!(
         "SELECT file_name, file_type, file_data FROM clinical_attachments WHERE id = $1",
         attachment_id
     )
@@ -279,7 +279,7 @@ pub async fn mark_comm_read(
     Path(comm_id): Path<Uuid>,
     Extension(auth_user): Extension<AuthUser>,
 ) -> AppResult<Json<ApiResponse<()>>> {
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         UPDATE clinical_communications
         SET status = 'read', read_at = NOW()

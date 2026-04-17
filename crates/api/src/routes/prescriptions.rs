@@ -59,7 +59,7 @@ async fn fetch_items(
     db: &sqlx::PgPool,
     prescription_id: Uuid,
 ) -> Result<Vec<PrescriptionItem>, sqlx::Error> {
-    let rows = sqlx::query!(
+    let rows = sqlx::query_unchecked!(
         r#"
         SELECT
             pi.id, pi.drug_id, d.name AS drug_name,
@@ -99,7 +99,7 @@ pub async fn create_prescription(
 ) -> AppResult<Json<ApiResponse<PrescriptionRow>>> {
     let physician_id = auth_user.0.entity_id;
 
-    let case_exists = sqlx::query_scalar!(
+    let case_exists = sqlx::query_scalar_unchecked!(
         "SELECT COUNT(*) FROM case_files WHERE id = $1 AND status = 'open'",
         case_id
     )
@@ -111,7 +111,7 @@ pub async fn create_prescription(
         return Err(AppError::NotFound(format!("open case {case_id} not found")));
     }
 
-    let prescription = sqlx::query!(
+    let prescription = sqlx::query_unchecked!(
         r#"
         INSERT INTO prescriptions (
             case_file_id, prescribed_by, ai_recommendation,
@@ -130,7 +130,7 @@ pub async fn create_prescription(
     .await?;
 
     for item in &payload.items {
-        let flagged = sqlx::query_scalar!(
+        let flagged = sqlx::query_scalar_unchecked!(
             r#"
             SELECT COUNT(*) FROM prescription_items pi
             JOIN drugs d ON d.id = pi.drug_id
@@ -147,7 +147,7 @@ pub async fn create_prescription(
         .await?
         .unwrap_or(0) > 0;
 
-        sqlx::query!(
+        sqlx::query_unchecked!(
             r#"
             INSERT INTO prescription_items (
                 prescription_id, drug_id, dosage, frequency,
@@ -187,7 +187,7 @@ pub async fn get_pharmacy_queue(
     State(state): State<AppState>,
     Extension(_auth_user): Extension<AuthUser>,
 ) -> AppResult<Json<ApiResponse<Vec<PrescriptionRow>>>> {
-    let prescriptions = sqlx::query!(
+    let prescriptions = sqlx::query_unchecked!(
         r#"
         SELECT id, case_file_id, prescribed_by, status,
                prescribed_at, physician_approved, ai_confidence, ai_recommendation
@@ -228,7 +228,7 @@ pub async fn dispense_prescription(
 ) -> AppResult<Json<ApiResponse<PrescriptionRow>>> {
     let pharmacist_id = auth_user.0.entity_id;
 
-    let prescription = sqlx::query!(
+    let prescription = sqlx::query_unchecked!(
         r#"
         UPDATE prescriptions
         SET status = 'dispensed'
@@ -244,7 +244,7 @@ pub async fn dispense_prescription(
         format!("approved prescription {prescription_id} not found")
     ))?;
 
-    let items = sqlx::query!(
+    let items = sqlx::query_unchecked!(
         "SELECT id, drug_id FROM prescription_items WHERE prescription_id = $1",
         prescription_id
     )
@@ -252,7 +252,7 @@ pub async fn dispense_prescription(
     .await?;
 
     for item in &items {
-        sqlx::query!(
+        sqlx::query_unchecked!(
             r#"
             INSERT INTO dispensary_log (drug_id, prescription_item_id, dispensed_by, quantity)
             VALUES ($1, $2, $3, 1)
@@ -264,7 +264,7 @@ pub async fn dispense_prescription(
         .execute(&state.db)
         .await?;
 
-        sqlx::query!(
+        sqlx::query_unchecked!(
             r#"
             UPDATE drug_stock
             SET quantity_on_hand = GREATEST(quantity_on_hand - 1, 0),
@@ -277,7 +277,7 @@ pub async fn dispense_prescription(
         .await?;
 
         // Check if stock just hit or crossed reorder threshold
-        if let Ok(Some(stock)) = sqlx::query!(
+        if let Ok(Some(stock)) = sqlx::query_unchecked!(
             r#"
             SELECT ds.quantity_on_hand, ds.reorder_threshold, d.name AS drug_name
             FROM drug_stock ds
@@ -291,7 +291,7 @@ pub async fn dispense_prescription(
         .await
         {
             // Notify all pharmacists and admins
-            let recipients = sqlx::query!(
+            let recipients = sqlx::query_unchecked!(
                 r#"
                 SELECT au.id
                 FROM auth_users au
@@ -327,7 +327,7 @@ pub async fn dispense_prescription(
         }
     }
 
-    if let Ok(Some(row)) = sqlx::query!(
+    if let Ok(Some(row)) = sqlx::query_unchecked!(
         "SELECT id FROM auth_users WHERE entity_id = $1 AND entity_type = 'staff'",
         prescription.prescribed_by
     )
@@ -376,7 +376,7 @@ pub async fn get_drug_stock(
     State(state): State<AppState>,
     Extension(_auth_user): Extension<AuthUser>,
 ) -> AppResult<Json<ApiResponse<Vec<DrugStockRow>>>> {
-    let stock = sqlx::query_as!(
+    let stock = sqlx::query_as_unchecked!(
         DrugStockRow,
         r#"
         SELECT

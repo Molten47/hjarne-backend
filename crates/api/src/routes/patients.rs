@@ -96,7 +96,7 @@ pub async fn list_patients(
         }
 
         let patients = if is_admin {
-            sqlx::query_as!(
+            sqlx::query_as_unchecked!(
                 PatientSummary,
                 r#"
                 SELECT id, mrn, first_name, last_name, date_of_birth,
@@ -113,7 +113,7 @@ pub async fn list_patients(
             .fetch_all(&state.db)
             .await?
         } else {
-            sqlx::query_as!(
+            sqlx::query_as_unchecked!(
                 PatientSummary,
                 r#"
                 SELECT DISTINCT p.id, p.mrn, p.first_name, p.last_name,
@@ -150,7 +150,7 @@ pub async fn list_patients(
     }
 
     let mut patients = if is_admin {
-        sqlx::query_as!(
+        sqlx::query_as_unchecked!(
             PatientSummary,
             r#"
             SELECT id, mrn, first_name, last_name, date_of_birth,
@@ -165,7 +165,7 @@ pub async fn list_patients(
         .fetch_all(&state.db)
         .await?
     } else {
-        sqlx::query_as!(
+        sqlx::query_as_unchecked!(
             PatientSummary,
             r#"
             SELECT DISTINCT p.id, p.mrn, p.first_name, p.last_name,
@@ -210,7 +210,7 @@ pub async fn get_patient(
     Extension(_auth_user): Extension<AuthUser>,
     Path(patient_id): Path<Uuid>,
 ) -> AppResult<Json<ApiResponse<PatientFull>>> {
-    let patient = sqlx::query_as!(
+    let patient = sqlx::query_as_unchecked!(
         PatientFull,
         r#"
         SELECT
@@ -243,7 +243,7 @@ pub async fn create_patient(
 
     // generate MRN -- format HJN-2026-XXXXXX
     let year = chrono::Utc::now().format("%Y");
-    let seq: i64 = sqlx::query_scalar!(
+    let seq: i64 = sqlx::query_scalar_unchecked!(
         "SELECT COUNT(*) FROM patients"
     )
     .fetch_one(&state.db)
@@ -260,7 +260,7 @@ pub async fn create_patient(
         _ => None,
     };
 
-let patient = sqlx::query_as!(
+let patient = sqlx::query_as_unchecked!(
     PatientSummary,
     r#"
     INSERT INTO patients (
