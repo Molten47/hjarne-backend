@@ -1,9 +1,11 @@
+
 services:
   - type: web
     name: hjarne-api
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
+    dockerContext: .
     envVars:
       - key: DATABASE_URL
         sync: false

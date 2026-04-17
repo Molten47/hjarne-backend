@@ -1,3 +1,4 @@
+@'
 # ---- Build stage ----
 FROM rust:1.94-slim AS builder
 
@@ -9,10 +10,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 
-# DEBUG: verify .sqlx files are present
-RUN echo "=== .sqlx file count ===" && ls .sqlx | wc -l && echo "=== first few files ===" && ls .sqlx | head -5
-
-ENV SQLX_OFFLINE=true
+ENV DATABASE_URL=postgresql://postgres:D40aFbZaoWuN073w@db.fhqmshaojkeivvmxnxyt.supabase.co:5432/postgres
 
 RUN cargo build --release --bin hjarne-api
 
@@ -28,3 +26,4 @@ WORKDIR /app
 COPY --from=builder /app/target/release/hjarne-api .
 EXPOSE 3000
 CMD ["./hjarne-api"]
+'@ | Set-Content C:\Users\USER\Desktop\hjarne-api\Dockerfile -Encoding utf8
