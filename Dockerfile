@@ -1,5 +1,4 @@
-@'
-# ---- Build stage ----
+﻿# ---- Build stage ----
 FROM rust:1.94-slim AS builder
 
 RUN apt-get update && apt-get install -y \
@@ -26,4 +25,3 @@ WORKDIR /app
 COPY --from=builder /app/target/release/hjarne-api .
 EXPOSE 3000
 CMD ["./hjarne-api"]
-'@ | Set-Content C:\Users\USER\Desktop\hjarne-api\Dockerfile -Encoding utf8
