@@ -1,4 +1,4 @@
-﻿# ---- Build stage ----
+﻿# ---- Build stage v2 ----
 FROM rust:1.94-slim AS builder
 
 RUN apt-get update && apt-get install -y \
