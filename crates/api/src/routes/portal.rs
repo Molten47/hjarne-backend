@@ -206,7 +206,7 @@ pub async fn send_invite(
     let invited_by = auth_user.0.entity_id;
 
     // confirm patient exists
-    let patient = sqlx::query!(
+    let patient = sqlx::query_unchecked!(
         "SELECT id, first_name, last_name, mrn FROM patients WHERE id = $1",
         patient_id
     )
@@ -215,7 +215,7 @@ pub async fn send_invite(
     .ok_or_else(|| AppError::NotFound("patient not found".to_string()))?;
 
     // invalidate any existing unconsumed invites
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         UPDATE portal_invites
         SET expires_at = NOW()
@@ -227,7 +227,7 @@ pub async fn send_invite(
     .await?;
 
     // create new invite
-    let invite = sqlx::query!(
+    let invite = sqlx::query_unchecked!(
         r#"
         INSERT INTO portal_invites (patient_id, invited_by)
         VALUES ($1, $2)
@@ -284,7 +284,7 @@ pub async fn setup_account(
         .map_err(|_| AppError::BadRequest("invalid token".to_string()))?;
 
     // fetch and validate invite
-    let invite = sqlx::query!(
+    let invite = sqlx::query_unchecked!(
         r#"
         SELECT id, patient_id, consumed_at, expires_at
         FROM portal_invites
@@ -305,7 +305,7 @@ pub async fn setup_account(
     }
 
     // check no auth account exists yet
-    let existing = sqlx::query_scalar!(
+    let existing = sqlx::query_scalar_unchecked!(
         "SELECT COUNT(*) FROM auth_users WHERE entity_id = $1 AND entity_type = 'patient'",
         invite.patient_id
     )
@@ -320,7 +320,7 @@ pub async fn setup_account(
     }
 
     // fetch patient MRN — used as their username/email field
-    let patient = sqlx::query!(
+    let patient = sqlx::query_unchecked!(
         "SELECT mrn FROM patients WHERE id = $1",
         invite.patient_id
     )
@@ -330,7 +330,7 @@ pub async fn setup_account(
     let password_hash = hash_password(&payload.password)?;
 
     // create auth_users row
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         INSERT INTO auth_users
             (entity_id, entity_type, email, password_hash, is_active, must_change_password)
@@ -345,14 +345,14 @@ pub async fn setup_account(
 
     // consume the invite
  // consume the invite
-    sqlx::query!(
+    sqlx::query_unchecked!(
         "UPDATE portal_invites SET consumed_at = NOW() WHERE id = $1",
         invite.id
     )
     .execute(&state.db)
     .await?;
     // mark patient portal as active
-    sqlx::query!(
+    sqlx::query_unchecked!(
         "UPDATE patients SET portal_active = true WHERE id = $1",
         invite.patient_id
     )
@@ -371,7 +371,7 @@ pub async fn portal_login(
     Json(payload): Json<PortalLoginRequest>,
 ) -> AppResult<Json<ApiResponse<PortalLoginResponse>>> {
     // fetch auth record by MRN (stored in email field for patients)
-    let user = sqlx::query!(
+    let user = sqlx::query_unchecked!(
         r#"
         SELECT au.id, au.entity_id, au.password_hash, au.is_active
         FROM auth_users au
@@ -391,7 +391,7 @@ pub async fn portal_login(
         return Err(AppError::Unauthorized("invalid MRN or password".to_string()));
     }
 
-    let patient = sqlx::query!(
+    let patient = sqlx::query_unchecked!(
         "SELECT id, mrn, first_name, last_name FROM patients WHERE id = $1",
         user.entity_id
     )
@@ -414,7 +414,7 @@ pub async fn portal_login(
     let refresh_expiry = Utc::now()
         + chrono::Duration::days(state.config.jwt_refresh_expiry_days);
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         INSERT INTO refresh_tokens
             (user_id, token_hash, family_id, expires_at, revoked)
@@ -428,7 +428,7 @@ pub async fn portal_login(
     .execute(&state.db)
     .await?;
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         "UPDATE auth_users SET last_login = NOW() WHERE id = $1",
         user.id
     )
@@ -454,7 +454,7 @@ pub async fn portal_me(
 ) -> AppResult<Json<ApiResponse<PortalPatient>>> {
     let patient_id = auth_user.0.entity_id;
 
-    let patient = sqlx::query!(
+    let patient = sqlx::query_unchecked!(
         r#"
         SELECT id, mrn, first_name, last_name,
                date_of_birth, gender, blood_group
@@ -541,7 +541,7 @@ pub async fn portal_diagnoses(
     let patient_id = auth_user.0.entity_id;
 
     // ensure case belongs to this patient
-    let owns = sqlx::query_scalar!(
+    let owns = sqlx::query_scalar_unchecked!(
         r#"SELECT COUNT(*) as "count!" FROM case_files WHERE id = $1 AND patient_id = $2"#,
         case_id, patient_id
     )
@@ -629,7 +629,7 @@ pub async fn portal_messages(
     .await?;
 
     // mark unread messages from staff as read
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         UPDATE portal_messages
         SET read_at = NOW()
@@ -685,7 +685,7 @@ let message = sqlx::query_as!(
     .await?;
 
     // notify the physician via existing WS pipeline
-    if let Ok(Some(row)) = sqlx::query!(
+    if let Ok(Some(row)) = sqlx::query_unchecked!(
         "SELECT id FROM auth_users WHERE entity_id = $1 AND entity_type = 'staff'",
         payload.staff_id
     )
@@ -802,7 +802,7 @@ pub async fn update_portal_profile(
         _ => None,
     };
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         UPDATE patients SET
             nationality = COALESCE($2, nationality),
@@ -821,7 +821,7 @@ pub async fn update_portal_profile(
     .execute(&state.db)
     .await?;
 
-    sqlx::query!(
+    sqlx::query_unchecked!(
         r#"
         INSERT INTO patient_contacts
             (patient_id, phone, email, address_line1, address_line2,
@@ -873,7 +873,7 @@ pub async fn staff_send_portal_message(
     }
 
     // confirm patient exists
-    let exists = sqlx::query_scalar!(
+    let exists = sqlx::query_scalar_unchecked!(
         r#"SELECT COUNT(*) as "count!" FROM patients WHERE id = $1"#,
         patient_id
     )
@@ -912,7 +912,7 @@ pub async fn staff_send_portal_message(
     .await?;
 
     // notify patient via WS if they're connected
-    if let Ok(Some(row)) = sqlx::query!(
+    if let Ok(Some(row)) = sqlx::query_unchecked!(
         "SELECT id FROM auth_users WHERE entity_id = $1 AND entity_type = 'patient'",
         patient_id
     )
